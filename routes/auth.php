@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -56,4 +58,16 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+});
+
+
+
+Route::middleware(['role:admin'])->group(function () {
+    Route::get('/admin/dashboard', [Controller::class, 'index']);
+    // Other admin routes
+});
+
+Route::middleware(['role:user'])->group(function () {
+    Route::get('/user/dashboard', [Controller::class, 'index']);
+    // Other user routes
 });
