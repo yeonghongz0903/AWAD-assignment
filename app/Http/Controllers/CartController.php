@@ -85,22 +85,36 @@ class CartController extends Controller
             return $item->quantity * $item->product->price;
         });
         
+        // Check stock before processing
+        foreach ($cartItems as $item) {
+            if ($item->quantity > $item->product->stock) {
+                return redirect()->route('cart.index')
+                    ->with('error', 'Insufficient stock for ' . $item->product->name);
+            }
+        }
+        
+        // Process the order
         foreach ($cartItems as $item) {
             $item->product->decrement('stock', $item->quantity);
             $item->delete();
         }
-
+    
         return redirect()->route('cart.success')
             ->with('success', 'Order placed successfully!')
             ->with('cartItems', $cartItems)
             ->with('total', $total);
-    }
+    }  
 
     public function success(): View
     {
         $cartItems = session()->get('cartItems', collect());
         $total = session()->get('total', 0);
-
+    
+        if ($cartItems->isEmpty()) {
+            return redirect()->route('cart.index')
+                ->with('error', 'No order data found. Please try again.');
+        }
+    
         return view('cart.success', compact('cartItems', 'total'));
     }
 }

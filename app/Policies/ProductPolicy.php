@@ -16,7 +16,8 @@ class ProductPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        // Allow all authenticated users to view products
+        return $user !== null;
     }
 
     /**
@@ -24,7 +25,8 @@ class ProductPolicy
      */
     public function view(User $user, Product $product): bool
     {
-        return true;
+        // Allow all authenticated users to view individual products
+        return $user !== null;
     }
 
     /**

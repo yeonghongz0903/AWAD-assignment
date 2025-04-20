@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,7 +28,13 @@ Route::middleware('auth')->group(function () {
 });
 
 // Product Routes
-Route::resource('products', ProductController::class);
+Route::middleware(['auth', AdminMiddleware::class])->group(function () {
+    Route::resource('products', ProductController::class)->except(['index', 'show']);
+});
+
+// Public product routes
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
 // Cart Routes
 Route::middleware('auth')->group(function () {

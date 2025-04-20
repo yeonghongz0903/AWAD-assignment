@@ -60,9 +60,8 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(Product $product)
     {
-        $product = Product::findOrFail($id);
         return view('products.show', compact('product'));
     }
 
@@ -87,7 +86,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
         if ($request->hasFile('image')) {
